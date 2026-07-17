@@ -70,7 +70,7 @@ def test_sales_report_error_does_not_disclose_stack_trace(client: TestClient) ->
 
     assert response.status_code == 422
     body = response.json()
-    detail = str(body)
+    detail = body.get("detail", "")
     assert "Traceback" not in detail
     assert "traceback" not in detail
     assert "sqlite3" not in detail

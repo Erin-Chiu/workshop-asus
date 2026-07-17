@@ -1,12 +1,13 @@
 import ast
 import operator
 import sqlite3
+from collections.abc import Callable
 
 from fastapi import APIRouter, HTTPException, Query, status
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
-_SAFE_OPS: dict[type, object] = {
+_SAFE_OPS: dict[type, Callable[[float, float], float]] = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
     ast.Mult: operator.mul,
@@ -23,7 +24,7 @@ def _eval_node(node: ast.expr, total: float) -> float:
     if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_OPS:
         left = _eval_node(node.left, total)
         right = _eval_node(node.right, total)
-        return _SAFE_OPS[type(node.op)](left, right)  # type: ignore[operator]
+        return _SAFE_OPS[type(node.op)](left, right)
     if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
         return -_eval_node(node.operand, total)
     raise ValueError("Unsupported expression")
