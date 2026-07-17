@@ -7,7 +7,7 @@ from app.repository import get_product, search_products
 
 router = APIRouter(prefix="/products", tags=["products"])
 
-SortField = Literal["name", "price", "category"]
+SortField = Literal["name", "price"]
 SortOrder = Literal["asc", "desc"]
 
 
