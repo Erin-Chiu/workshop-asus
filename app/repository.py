@@ -17,3 +17,20 @@ def list_products() -> list[Product]:
 def get_product(product_id: int) -> Product | None:
     return next((product for product in PRODUCTS if product.id == product_id), None)
 
+
+def search_products(
+    q: str | None,
+    sort: str | None,
+    order: str,
+) -> list[Product]:
+    results = PRODUCTS.copy()
+    if q is not None:
+        needle = q.lower()
+        results = [
+            p for p in results if needle in p.name.lower() or needle in p.category.lower()
+        ]
+    if sort is not None:
+        reverse = order == "desc"
+        results = sorted(results, key=lambda p: getattr(p, sort), reverse=reverse)
+    return results
+
